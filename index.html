@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anastasia Konyuhova — Product Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --radius-card: 22px;
+    --side: max(0px, calc((100vw - 1440px) / 2));
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+
+  html[data-theme="dark"] {
+    --bg: #0A0A0B; --surface: #111113; --panel: #1B1B1D; --well: #17171A;
+    --stroke: #27272B; --ink: #F4F4F2; --grey: #BABAC2;
+    --sel-bg: #2C2C31; --sel-fg: #EDEDEB;
+  }
+  html[data-theme="light"] {
+    --bg: #FFFFFF; --surface: #F5F5F7; --panel: #F5F5F7; --well: #EDEDF2;
+    --stroke: #E8E8EF; --ink: #1D1D1F; --grey: #6E6E73;
+    --sel-bg: #E8E8ED; --sel-fg: #1D1D1F;
+  }
+
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Onest', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background .25s ease, color .25s ease;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; }
+
+  /* ---------- shared controls ---------- */
+  .cv-btn {
+    display: inline-flex; align-items: center; min-height: 36px;
+    padding: 0 16px; border-radius: 999px; border: 1px solid var(--stroke);
+    background: transparent; color: var(--ink); font-size: 13px; white-space: nowrap;
+  }
+  .controls { display: flex; align-items: center; gap: 8px; }
+  .seg {
+    display: inline-flex; padding: 2px; border-radius: 999px;
+    border: 1px solid var(--stroke); background: transparent;
+  }
+  .seg button {
+    min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px;
+    cursor: pointer; font-size: 12px; background: transparent; color: var(--grey);
+  }
+  .seg button.active { background: var(--sel-bg); color: var(--sel-fg); }
+  .theme-btn {
+    width: 36px; height: 36px; display: inline-flex; align-items: center;
+    justify-content: center; border-radius: 999px; border: 1px solid var(--stroke);
+    background: transparent; color: var(--ink); cursor: pointer;
+  }
+  html[data-theme="dark"] .theme-btn .i-moon { display: none; }
+  html[data-theme="light"] .theme-btn .i-sun { display: none; }
+
+  /* ---------- layout ---------- */
+  .sidebar {
+    position: fixed; top: 0; left: var(--side); width: 400px; height: 100vh; height: 100dvh;
+    box-sizing: border-box;
+    padding: calc(28px + env(safe-area-inset-top, 0px)) 40px 22px 48px;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .identity { display: flex; align-items: center; gap: 18px; }
+  .photo { width: 72px; height: 72px; border-radius: 999px; object-fit: cover; flex-shrink: 0; }
+  .name { margin: 0; font-weight: 300; font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; }
+  .role-title { margin-top: 8px; font-size: 13px; color: var(--grey); }
+  .bio { margin: 16px 0 0 0; font-size: 14.5px; line-height: 1.5; color: var(--grey); }
+
+  .contacts { margin-top: 16px; display: flex; gap: 8px; }
+  .icon-btn {
+    width: 40px; height: 40px; display: inline-flex; align-items: center;
+    justify-content: center; border-radius: 999px; border: 1px solid var(--stroke);
+    background: transparent; color: var(--ink);
+  }
+
+  .xp-label { margin-top: 48px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey); }
+  .xp-list { margin-top: 6px; display: flex; flex-direction: column; }
+  .job {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--stroke);
+  }
+  .job .company { font-size: 16.5px; letter-spacing: -0.01em; }
+  .job .role { margin-top: 2px; font-size: 13px; color: var(--grey); }
+  .job .dates { text-align: right; font-size: 13px; color: var(--grey); line-height: 1.4; white-space: nowrap; padding-top: 3px; }
+
+  .sidebar .cv-btn { margin-top: 24px; align-self: flex-start; }
+  .controls-fixed { position: fixed; left: calc(48px + var(--side)); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+
+  .topbar { display: none; }
+
+  /* ---------- feed ---------- */
+  .feed {
+    margin-left: calc(460px + var(--side)); box-sizing: border-box;
+    padding: 26px calc(28px + var(--side)) 60px 0;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .card {
+    display: flex; align-items: stretch; border-radius: var(--radius-card); overflow: hidden;
+    background: var(--surface); min-height: 560px; color: var(--ink); max-width: 950px;
+  }
+  .card .cover {
+    flex: 0 0 630px; display: flex; align-items: center; justify-content: center;
+    background: var(--well);
+  }
+  .cover .ph { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey); text-align: center; padding: 0 24px; }
+  .cover--embed { padding: 0; position: relative; }
+  .coverframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .cover-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .card .text {
+    width: 320px; flex-shrink: 0; box-sizing: border-box; padding: 30px;
+    display: flex; flex-direction: column; background: var(--panel);
+  }
+  .card .title { margin: 0; font-weight: 300; font-size: 28px; line-height: 1.14; letter-spacing: -0.03em; }
+  .card .desc { margin: 10px 0 0 0; font-size: 14.5px; line-height: 1.55; color: var(--grey); }
+  .sep { margin: 18px 0 18px 0; height: 1px; background: var(--stroke); }
+  .metrics { display: flex; flex-direction: column; gap: 22px; margin-bottom: 28px; }
+  .metric .num { font-weight: 300; font-size: 28px; letter-spacing: -0.03em; }
+  .metric .cap { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--grey); }
+  .read-case {
+    margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 7px;
+    min-height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--stroke);
+    background: transparent; color: var(--grey); font-size: 13px;
+    opacity: 0.55; cursor: not-allowed;
+  }
+  .read-case .rc-lock { flex-shrink: 0; }
+  .nda {
+    margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center;
+    min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--stroke);
+    color: var(--grey); font-size: 14.5px;
+  }
+
+  /* ---------- hover ---------- */
+  .cv-btn, .icon-btn, .theme-btn, .seg button, .read-case {
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  @media (hover: hover) {
+    .cv-btn:hover, .icon-btn:hover, .theme-btn:hover {
+      background: var(--ink); color: var(--bg); border-color: var(--ink);
+    }
+    .seg button:not(.active):hover { background: var(--ink); color: var(--bg); }
+  }
+
+  /* ======= TABLET + MOBILE: vertical cards, image capped at native size ======= */
+  @media (max-width: 1359px) {
+    .card { flex-direction: column; align-items: stretch; min-height: 0; height: auto; max-width: 630px; }
+    .card .cover { flex: none; width: 100%; height: auto; aspect-ratio: 630 / 560; }
+    .card .text { width: auto; padding: 26px 24px; }
+    .metrics { flex-direction: row; gap: 20px; margin-bottom: 0; }
+    .metric { flex: 1; }
+    .card .title { font-size: 26px; }
+    .metric .num { font-size: 26px; }
+    .read-case { display: none; }
+    .nda { margin-top: 20px; min-height: 0; padding: 0; border: 0; }
+  }
+
+  /* ======= MOBILE only: profile on top ======= */
+  @media (max-width: 800px) {
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: calc(14px + env(safe-area-inset-top, 0px)) 20px 12px 20px;
+    }
+    .topbar .cv-btn { min-height: 40px; }
+    .topbar .theme-btn { width: 40px; height: 40px; }
+    .topbar .seg button { min-height: 36px; }
+    .sidebar {
+      position: static; width: auto; height: auto; overflow: visible;
+      padding: 16px 20px 0 20px; align-items: center; text-align: center;
+    }
+    .sidebar > .cv-btn, .controls-fixed { display: none; }
+    .identity { flex-direction: column; gap: 0; }
+    .photo { width: 140px; height: 140px; }
+    .identity .idtext { margin-top: 28px; display: flex; flex-direction: column; align-items: center; }
+    .role-title { order: -1; margin-top: 0; font-size: 13px; }
+    .name { margin-top: 6px; font-size: 30px; }
+    .bio { margin-top: 16px; max-width: 320px; }
+    .contacts { margin-top: 24px; justify-content: center; gap: 10px; }
+    .icon-btn { width: 44px; height: 44px; }
+    .xp-label { margin-top: 32px; align-self: stretch; text-align: left; }
+    .xp-list { align-self: stretch; text-align: left; }
+    .feed { margin-left: 0; padding: 80px 20px calc(40px + env(safe-area-inset-bottom, 0px)) 20px; }
+    .card { max-width: none; }
+  }
+
+  /* profile text block (tablet + desktop) */
+  @media (min-width: 801px) {
+    .identity .idtext { display: flex; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- top bar (mobile only) -->
+  <header class="topbar">
+    <a class="cv-btn" data-i18n="showCv" href="cv.pdf" target="_blank" rel="noopener">Show CV</a>
+    <div class="controls">
+      <div class="seg">
+        <button type="button" class="lang-en active" data-lang="en">EN</button>
+        <button type="button" class="lang-ru" data-lang="ru">RU</button>
+      </div>
+      <button type="button" class="theme-btn" aria-label="Switch theme">
+        <svg class="i-sun" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.6v2.1M12 19.3v2.1M4.4 4.4l1.5 1.5M18.1 18.1l1.5 1.5M2.6 12h2.1M19.3 12h2.1M4.4 19.6l1.5-1.5M18.1 5.9l1.5-1.5"></path></g></svg>
+        <svg class="i-moon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- sidebar / profile -->
+  <aside class="sidebar">
+    <div class="identity">
+      <img class="photo" src="photo.jpg" alt="Anastasia Konyuhova">
+      <div class="idtext">
+        <h1 class="name">Anastasia Konyuhova</h1>
+        <div class="role-title" data-i18n="title">Lead Product Designer</div>
+      </div>
+    </div>
+
+    <p class="bio" data-i18n="bio"></p>
+
+    <div class="contacts">
+      <a class="icon-btn" aria-label="Telegram" target="_blank" rel="noopener noreferrer" href="https://t.me/anastasya_uiux"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"></path></svg></a>
+      <a class="icon-btn" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/anastasia-konyuhova/"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"></path></svg></a>
+      <a class="icon-btn" aria-label="Behance" target="_blank" rel="noopener noreferrer" href="https://www.behance.net/anastasyyaa"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.799 5.698c.589 0 1.12.051 1.606.156.483.102.9.273 1.245.507.343.235.612.546.804.939.188.387.281.871.281 1.443 0 .619-.141 1.137-.421 1.551-.284.413-.7.751-1.255 1.014.757.219 1.324.602 1.701 1.146.375.546.563 1.206.563 1.978 0 .625-.122 1.164-.361 1.62a3.102 3.102 0 0 1-.985 1.14 4.361 4.361 0 0 1-1.431.668 6.27 6.27 0 0 1-1.65.219H0V5.698h7.799zm-.571 4.712c.483 0 .879-.114 1.189-.344.312-.228.464-.603.464-1.117 0-.286-.051-.52-.152-.703a1.17 1.17 0 0 0-.416-.43 1.717 1.717 0 0 0-.596-.219 3.693 3.693 0 0 0-.697-.063H3.287v2.879h3.941zm.221 4.949c.264 0 .518-.025.76-.075.24-.049.456-.139.638-.265a1.31 1.31 0 0 0 .436-.489c.105-.211.157-.481.157-.813 0-.649-.183-1.112-.548-1.389-.364-.277-.849-.416-1.449-.416H3.287v3.446h4.362zM19.825 6.011h-5.021v1.459h5.021V6.011zm-2.411 12.112c1.049 0 1.945-.237 2.683-.712.738-.474 1.286-1.265 1.642-2.367h-2.46c-.084.284-.306.555-.667.816-.361.26-.791.391-1.29.391-.694 0-1.228-.18-1.602-.54-.373-.36-.578-.945-.613-1.755h6.76c.047-.726-.016-1.42-.188-2.085a5.236 5.236 0 0 0-.785-1.749 4.009 4.009 0 0 0-1.358-1.216c-.546-.304-1.185-.456-1.918-.456-.659 0-1.256.117-1.79.351a4.027 4.027 0 0 0-1.38.964 4.302 4.302 0 0 0-.888 1.446 4.993 4.993 0 0 0-.311 1.772c0 .645.101 1.241.302 1.787.201.546.489 1.017.864 1.414.374.397.826.705 1.356.924.531.219 1.128.328 1.791.328zm-1.858-5.994c.07-.655.29-1.146.662-1.472.371-.325.822-.489 1.353-.489.56 0 .992.149 1.296.447.303.298.489.761.561 1.388v.126h-3.872z"></path></svg></a>
+      <a class="icon-btn" aria-label="Email" href="mailto:konyuhovaanastasia@mail.ru"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.9A1.9 1.9 0 0 1 4.9 4h14.2A1.9 1.9 0 0 1 21 5.9v.3l-9 5-9-5v-.3zM3 8.4l8.5 4.7c.3.2.7.2 1 0L21 8.4v9.7A1.9 1.9 0 0 1 19.1 20H4.9A1.9 1.9 0 0 1 3 18.1V8.4z"></path></svg></a>
+    </div>
+
+    <div class="xp-label" data-i18n="experience">Experience</div>
+    <div class="xp-list" id="xp-list"></div>
+
+    <a class="cv-btn" data-i18n="showCv" href="cv.pdf" target="_blank" rel="noopener">Show CV</a>
+
+    <div class="controls controls-fixed">
+      <div class="seg">
+        <button type="button" class="lang-en active" data-lang="en">EN</button>
+        <button type="button" class="lang-ru" data-lang="ru">RU</button>
+      </div>
+      <button type="button" class="theme-btn" aria-label="Switch theme">
+        <svg class="i-sun" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.6v2.1M12 19.3v2.1M4.4 4.4l1.5 1.5M18.1 18.1l1.5 1.5M2.6 12h2.1M19.3 12h2.1M4.4 19.6l1.5-1.5M18.1 5.9l1.5-1.5"></path></g></svg>
+        <svg class="i-moon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"></path></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- project feed -->
+  <main class="feed">
+    <div class="card card--tall">
+      <div class="cover cover--embed"><video class="cover-video" id="cover1" loop muted playsinline preload="auto" src="cover-1.mp4"></video></div>
+      <div class="text">
+        <h2 class="title" data-i18n="case1Title"></h2>
+        <p class="desc" data-i18n="case1Sub"></p>
+        <div class="sep"></div>
+        <div class="metrics">
+          <div class="metric"><div class="num" data-i18n="case1N1"></div><div class="cap" data-i18n="case1M1"></div></div>
+          <div class="metric"><div class="num" data-i18n="case1N2"></div><div class="cap" data-i18n="case1M2"></div></div>
+        </div>
+        <span class="read-case"><svg class="rc-lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span data-i18n="readCase"></span></span>
+      </div>
+    </div>
+
+    <div class="card card--tall">
+      <div class="cover cover--embed"><video class="cover-video" id="cover2" loop muted playsinline preload="metadata" src="cover-2.mp4"></video></div>
+      <div class="text">
+        <h2 class="title" data-i18n="case2Title"></h2>
+        <p class="desc" data-i18n="case2Desc"></p>
+        <div class="sep"></div>
+        <div class="metrics">
+          <div class="metric"><div class="num">32%</div><div class="cap" data-i18n="case2M1"></div></div>
+          <div class="metric"><div class="num">288k</div><div class="cap" data-i18n="case2M2"></div></div>
+        </div>
+        <span class="read-case"><svg class="rc-lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span data-i18n="readCase"></span></span>
+      </div>
+    </div>
+    <div class="card card--tall">
+      <div class="cover cover--embed"><img class="cover-img" loading="lazy" src="mockup.jpg" alt="Project 3 — mockup"></div>
+      <div class="text">
+        <h2 class="title" data-i18n="case3Title"></h2>
+        <p class="desc" data-i18n="case3Sub"></p>
+        <div class="sep"></div>
+        <div class="metrics">
+          <div class="metric"><div class="num">&lt;1</div><div class="cap" data-i18n="case3M1"></div></div>
+          <div class="metric"><div class="num">37%</div><div class="cap" data-i18n="case3M2"></div></div>
+        </div>
+        <span class="read-case"><svg class="rc-lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span data-i18n="readCase"></span></span>
+      </div>
+    </div>
+  </main>
+
+<script>
+  var I18N = {
+    en: {
+      title: 'Lead Product Designer',
+      showCv: 'Show CV',
+      bio: 'A product designer with 7+\u00A0years of experience. I work with big data, combining analytical thinking with creativity',
+      experience: 'Experience',
+      ph1: 'Ozon seller app — case visuals',
+      ph2: 'Chainstack wallet — case visuals',
+      case1Title: 'AI assistant for sellers',
+      case1N1: '1.2 days',
+      case1N2: '>60%',
+      case1Sub: '1.5 years building the product from scratch — started with a command-based bot in the app, ended with an AI mode in the web version.',
+      case1M1: 'Average time between user visits to the bot',
+      case1M2: '60% of requests are for analytics data, 30% for information, and 8% for problems',
+      readCase: 'Read case',
+      case2Title: 'Analytics WB\u00A0Partners App',
+      case2Desc: 'Improved the user experience of working with analytics. NPS and project MAU/DAU grew. Led a major redesign of in-app analytics.',
+      nda: 'NDA, by request',
+      case2M1: '32% of interactions with analytics reports happen in the app',
+      case2M2: 'MAU of the analytics sections in the app',
+      case3Title: 'Analytics WB\u00A0Partners',
+      case3Sub: 'I lead the section as lead designer, where we build 20 analytics products. Most of the projects are paid.',
+      case3M1: 'Average number of support requests. Plus a high product NPS.',
+      case3M2: 'Stickiness Index. The average user is active in the product about 12 days a month.'
+    },
+    ru: {
+      title: 'Lead Product Designer',
+      showCv: 'Смотреть CV',
+      bio: 'Продуктовый дизайнер с\u00A0опытом 7+\u00A0лет. Работаю с\u00A0большими данными, сочетая аналитическое мышление и\u00A0креативность',
+      experience: 'Опыт',
+      ph1: 'Ozon для продавцов — визуал кейса',
+      ph2: 'Chainstack wallet — визуал кейса',
+      case1Title: 'AI-Помощник для продавцов',
+      case1N1: '1,2\u00A0дня',
+      case1N2: '>60%',
+      case1Sub: 'Работала с\u00A0нуля над проектом 1,5\u00A0года. Начинали с\u00A0бота по\u00A0командам в\u00A0приложении, закончили AI-режимом в\u00A0веб-версии',
+      case1M1: 'Средний период между заходами пользователей в\u00A0бота',
+      case1M2: '60% запросов приходится на\u00A0аналитические данные, 30% на\u00A0информационные и\u00A08% на\u00A0проблемы',
+      readCase: 'Читать кейс',
+      case2Title: 'Аналитика WB\u00A0Partners App',
+      case2Desc: 'Улучшила пользовательский опыт в\u00A0работе с\u00A0аналитикой. Вырос NPS и\u00A0MAU/DAU проектов. Сделала большой редизайн аналитики в\u00A0приложении',
+      nda: 'NDA, по запросу',
+      case2M1: '32% взаимодействий с\u00A0аналитическими отчётами через приложение',
+      case2M2: 'MAU разделов аналитики в\u00A0приложении',
+      case3Title: 'Аналитика WB\u00A0Partners',
+      case3Sub: 'Отвечаю за\u00A0раздел, как lead designer, где развиваем 20\u00A0продуктов аналитики. Большая часть проектов платная',
+      case3M1: 'Среднее количество обращений. Также высокий NPS продукта',
+      case3M2: 'Stickiness Index. Средний пользователь активен в\u00A0продукте примерно 12\u00A0дней в\u00A0месяц'
+    }
+  };
+
+  var EXP = {
+    en: [
+      { company: 'Wildberries', role: 'Lead Product Designer', p1: 'now', p2: 'Mar 2026' },
+      { company: 'Wildberries', role: 'Sr. Product Designer', p1: 'Jan 2026', p2: 'Jun 2024' },
+      { company: 'Whitemark', role: 'UI/UX Designer', p1: 'May 2024', p2: 'Mar 2023' },
+      { company: 'Startup', role: 'Product Designer', p1: 'Feb 2023', p2: 'May 2022' },
+      { company: 'Vela', role: 'UI/UX Designer', p1: 'Apr 2022', p2: 'Feb 2020' }
+    ],
+    ru: [
+      { company: 'Wildberries', role: 'Lead Product Designer', p1: 'сейчас', p2: 'март 2026' },
+      { company: 'Wildberries', role: 'Sr. Product Designer', p1: 'январь 2026', p2: 'июнь 2024' },
+      { company: 'Whitemark', role: 'UI/UX Designer', p1: 'май 2024', p2: 'март 2023' },
+      { company: 'Стартап', role: 'Product Designer', p1: 'февраль 2023', p2: 'май 2022' },
+      { company: 'Vela', role: 'UI/UX Designer', p1: 'апрель 2022', p2: 'февраль 2020' }
+    ]
+  };
+
+  var lang = 'en', theme = 'dark';
+  try { lang = localStorage.getItem('pf_lang') || 'en'; } catch (e) {}
+  try { theme = localStorage.getItem('pf_theme') || 'dark'; } catch (e) {}
+
+  function applyLang() {
+    var dict = I18N[lang];
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n');
+      if (dict[k] != null) el.textContent = dict[k];
+    });
+    document.documentElement.lang = lang;
+    var list = document.getElementById('xp-list');
+    list.innerHTML = '';
+    EXP[lang].forEach(function (j) {
+      var row = document.createElement('div'); row.className = 'job';
+      var left = document.createElement('div');
+      var c = document.createElement('div'); c.className = 'company'; c.textContent = j.company;
+      var r = document.createElement('div'); r.className = 'role'; r.textContent = j.role;
+      left.appendChild(c); left.appendChild(r);
+      var d = document.createElement('div'); d.className = 'dates';
+      var d1 = document.createElement('div'); d1.textContent = j.p1;
+      var d2 = document.createElement('div'); d2.textContent = j.p2;
+      d.appendChild(d1); d.appendChild(d2);
+      row.appendChild(left); row.appendChild(d);
+      list.appendChild(row);
+    });
+    document.querySelectorAll('[data-lang]').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+  }
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  document.querySelectorAll('[data-lang]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      lang = b.getAttribute('data-lang');
+      try { localStorage.setItem('pf_lang', lang); } catch (e) {}
+      applyLang();
+    });
+  });
+  document.querySelectorAll('.theme-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      theme = (theme === 'dark') ? 'light' : 'dark';
+      try { localStorage.setItem('pf_theme', theme); } catch (e) {}
+      applyTheme();
+    });
+  });
+
+  applyTheme();
+  applyLang();
+
+
+  // --- one video on screen at a time: play only the most-visible cover ---
+  (function () {
+    var vids = Array.prototype.slice.call(document.querySelectorAll('.cover-video'));
+    if (!vids.length) return;
+    var reduce = false;
+    try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    var ratio = {};
+    vids.forEach(function (v, i) { v.__i = i; ratio[i] = 0; try { v.pause(); } catch (e) {} });
+    var active = null;
+    function playV(v) { try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    function apply() {
+      if (document.hidden || reduce) { vids.forEach(function (v) { v.pause(); }); active = null; return; }
+      var best = null, bestR = 0;
+      vids.forEach(function (v) { var r = ratio[v.__i] || 0; if (r > bestR) { bestR = r; best = v; } });
+      if (active && best !== active) { var ar = ratio[active.__i] || 0; if (ar >= 0.35 && bestR <= ar + 0.08) best = active; }
+      if (bestR < 0.35) best = null;
+      vids.forEach(function (v) { if (v === best) playV(v); else v.pause(); });
+      active = best;
+    }
+    try {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { ratio[e.target.__i] = e.intersectionRatio; });
+        apply();
+      }, { threshold: [0, 0.2, 0.35, 0.5, 0.65, 0.8, 1] });
+      vids.forEach(function (v) { io.observe(v); });
+    } catch (e) { vids.forEach(playV); return; }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) vids.forEach(function (v) { v.pause(); });
+      else { active = null; apply(); }
+    });
+  })();
+</script>
+</body>
+</html>
